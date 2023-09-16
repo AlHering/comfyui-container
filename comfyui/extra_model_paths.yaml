@@ -1,0 +1,28 @@
+#config for mounted model folders
+central_model_folder:
+    base_path: /comfyui-container/machine_learning_models
+    checkpoints: |
+        STABLE_DIFFUSION
+        CHECKPOINTS
+    configs:  |
+        STABLE_DIFFUSION
+        CHECKPOINTS
+    vae: VAE
+    loras: |
+         LORA
+         LYCORIS
+    upscale_models: |
+         ESRGAN
+         REAL_ESRGAN
+         SWINIR
+    embeddings: |
+        EMBEDDINGS
+        TEXTUAL_INVERSION
+    hypernetworks: HYPERNETWORKS
+    controlnet: CONTROL_NET
+
+#other_ui:
+#    base_path: path/to/ui
+#    checkpoints: models/checkpoints
+#    gligen: models/gligen
+#    custom_nodes: path/custom_nodes
