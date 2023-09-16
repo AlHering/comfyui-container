@@ -179,9 +179,6 @@ cython_debug/
 # If it's a Mac
 .DS_Store
 
-# Let the frontend manage its own gitignore
-!invokeai/frontend/web/*
-
 # Scratch folder
 .scratch/
 .vscode/
@@ -191,9 +188,8 @@ cython_debug/
 environment.yml
 requirements.txt
 
-# source installer files
-installer/*zip
-installer/install.bat
-installer/install.sh
-installer/update.bat
-installer/update.sh
+/.vs
+.idea/
+venv/
+output/
+input/
