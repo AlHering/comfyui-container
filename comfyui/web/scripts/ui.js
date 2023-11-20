@@ -577,6 +577,25 @@ export class ComfyUI {
 			defaultValue: false,
 		});
 
+		this.settings.addSetting({
+			id: "Comfy.DisableFloatRounding",
+			name: "Disable rounding floats (requires page reload).",
+			type: "boolean",
+			defaultValue: false,
+		});
+
+		this.settings.addSetting({
+			id: "Comfy.FloatRoundingPrecision",
+			name: "Decimal places [0 = auto] (requires page reload).",
+			type: "slider",
+			attrs: {
+				min: 0,
+				max: 6,
+				step: 1,
+			},
+			defaultValue: 0,
+		});
+
 		const fileInput = $el("input", {
 			id: "comfy-file-input",
 			type: "file",
@@ -700,20 +719,22 @@ export class ComfyUI {
 							filename += ".json";
 						}
 					}
-					const json = JSON.stringify(app.graph.serialize(), null, 2); // convert the data to a JSON string
-					const blob = new Blob([json], {type: "application/json"});
-					const url = URL.createObjectURL(blob);
-					const a = $el("a", {
-						href: url,
-						download: filename,
-						style: {display: "none"},
-						parent: document.body,
+					app.graphToPrompt().then(p=>{
+						const json = JSON.stringify(p.workflow, null, 2); // convert the data to a JSON string
+						const blob = new Blob([json], {type: "application/json"});
+						const url = URL.createObjectURL(blob);
+						const a = $el("a", {
+							href: url,
+							download: filename,
+							style: {display: "none"},
+							parent: document.body,
+						});
+						a.click();
+						setTimeout(function () {
+							a.remove();
+							window.URL.revokeObjectURL(url);
+						}, 0);
 					});
-					a.click();
-					setTimeout(function () {
-						a.remove();
-						window.URL.revokeObjectURL(url);
-					}, 0);
 				},
 			}),
 			$el("button", {
@@ -790,7 +811,8 @@ export class ComfyUI {
 			if (
 				this.lastQueueSize != 0 &&
 				status.exec_info.queue_remaining == 0 &&
-				document.getElementById("autoQueueCheckbox").checked
+				document.getElementById("autoQueueCheckbox").checked &&
+				! app.lastExecutionError
 			) {
 				app.queuePrompt(0, this.batchCount);
 			}

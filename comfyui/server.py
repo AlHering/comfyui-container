@@ -82,7 +82,8 @@ class PromptServer():
         if args.enable_cors_header:
             middlewares.append(create_cors_middleware(args.enable_cors_header))
 
-        self.app = web.Application(client_max_size=104857600, middlewares=middlewares)
+        max_upload_size = round(args.max_upload_size * 1024 * 1024)
+        self.app = web.Application(client_max_size=max_upload_size, middlewares=middlewares)
         self.sockets = dict()
         self.web_root = os.path.join(os.path.dirname(
             os.path.realpath(__file__)), "web")
@@ -132,12 +133,12 @@ class PromptServer():
         @routes.get("/extensions")
         async def get_extensions(request):
             files = glob.glob(os.path.join(
-                self.web_root, 'extensions/**/*.js'), recursive=True)
+                glob.escape(self.web_root), 'extensions/**/*.js'), recursive=True)
             
             extensions = list(map(lambda f: "/" + os.path.relpath(f, self.web_root).replace("\\", "/"), files))
             
             for name, dir in nodes.EXTENSION_WEB_DIRS.items():
-                files = glob.glob(os.path.join(dir, '**/*.js'), recursive=True)
+                files = glob.glob(os.path.join(glob.escape(dir), '**/*.js'), recursive=True)
                 extensions.extend(list(map(lambda f: "/extensions/" + urllib.parse.quote(
                     name) + "/" + os.path.relpath(f, dir).replace("\\", "/"), files)))
 
@@ -413,7 +414,11 @@ class PromptServer():
         async def get_object_info(request):
             out = {}
             for x in nodes.NODE_CLASS_MAPPINGS:
-                out[x] = node_info(x)
+                try:
+                    out[x] = node_info(x)
+                except Exception as e:
+                    print(f"[ERROR] An error occurred while retrieving information for the '{x}' node.", file=sys.stderr)
+                    traceback.print_exc()
             return web.json_response(out)
 
         @routes.get("/object_info/{node_class}")
