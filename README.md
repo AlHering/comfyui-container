@@ -6,7 +6,7 @@
 ## Used Repositories/Code
 | Name         | Link     | commit |
 |--------------|-----------|------------|
-| comfyanonymous' ComfyUI WebUI |  https://github.com/comfyanonymous/ComfyUI    |   07691e8     |
+| comfyanonymous' ComfyUI WebUI |  https://github.com/comfyanonymous/ComfyUI    |   31c5ea7     |
 
 ## Installation
 ### 1. Install Docker
@@ -36,7 +36,7 @@ The first file is used for importing the models from `/comfyui-container/machine
 
 ### 4. Build a Docker image from the repository
 ```sh
-nvidia-docker build -t comfyui-container:v1.0 <path to repo folder>
+nvidia-docker build -t comfyui-container:v1.1 <path to repo folder>
 ```
 ### 5. Start a container based off of the image
 ```sh
@@ -44,7 +44,7 @@ nvidia-docker run  \
     -it --net=host -p 8188:8188 --gpus all \
     --mount type=bind,source=<my local model folder>,target=/stable-diffusion-webui-container/machine_learning_models \
     --mount type=bind,source=<my local output folder>,target=/stable-diffusion-webui-container/stable_diffusion_output \
-    "comfyui-container:v1.0"
+    "comfyui-container:v1.1"
 ```
 
 Note, that you can also open a terminal by appending `/bin/bash` to the command above. You will get to a terminal inside the running container and execute the bash script for linking the machine learning model folders. Afterwards you can start the webui manually with `bash run_webui.sh`.
@@ -56,7 +56,7 @@ If you exit the container and it is stopped, you can use
 ```sh
 docker ps --all
 ```
-to retrieve the name of the `comfyui-container:v1.0` container and rerun and interactively enter it with
+to retrieve the name of the `comfyui-container:v1.1` container and rerun and interactively enter it with
 ```sh
 nvidia-docker restart <container name> &&  nvidia-docker exec -it <container name> /bin/bash
 ```
