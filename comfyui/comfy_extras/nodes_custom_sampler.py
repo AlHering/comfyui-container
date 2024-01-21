@@ -13,6 +13,7 @@ class BasicScheduler:
                     {"model": ("MODEL",),
                      "scheduler": (comfy.samplers.SCHEDULER_NAMES, ),
                      "steps": ("INT", {"default": 20, "min": 1, "max": 10000}),
+                     "denoise": ("FLOAT", {"default": 1.0, "min": 0.0, "max": 1.0, "step": 0.01}),
                       }
                }
     RETURN_TYPES = ("SIGMAS",)
@@ -20,8 +21,14 @@ class BasicScheduler:
 
     FUNCTION = "get_sigmas"
 
-    def get_sigmas(self, model, scheduler, steps):
-        sigmas = comfy.samplers.calculate_sigmas_scheduler(model.model, scheduler, steps).cpu()
+    def get_sigmas(self, model, scheduler, steps, denoise):
+        total_steps = steps
+        if denoise < 1.0:
+            total_steps = int(steps/denoise)
+
+        comfy.model_management.load_models_gpu([model])
+        sigmas = comfy.samplers.calculate_sigmas_scheduler(model.model, scheduler, total_steps).cpu()
+        sigmas = sigmas[-(steps + 1):]
         return (sigmas, )
 
 
@@ -79,6 +86,29 @@ class PolyexponentialScheduler:
 
     def get_sigmas(self, steps, sigma_max, sigma_min, rho):
         sigmas = k_diffusion_sampling.get_sigmas_polyexponential(n=steps, sigma_min=sigma_min, sigma_max=sigma_max, rho=rho)
+        return (sigmas, )
+
+class SDTurboScheduler:
+    @classmethod
+    def INPUT_TYPES(s):
+        return {"required":
+                    {"model": ("MODEL",),
+                     "steps": ("INT", {"default": 1, "min": 1, "max": 10}),
+                     "denoise": ("FLOAT", {"default": 1.0, "min": 0, "max": 1.0, "step": 0.01}),
+                      }
+               }
+    RETURN_TYPES = ("SIGMAS",)
+    CATEGORY = "sampling/custom_sampling/schedulers"
+
+    FUNCTION = "get_sigmas"
+
+    def get_sigmas(self, model, steps, denoise):
+        start_step = 10 - int(10 * denoise)
+        timesteps = torch.flip(torch.arange(1, 11) * 100 - 1, (0,))[start_step:start_step + steps]
+        inner_model = model.patch_model(patch_weights=False)
+        sigmas = inner_model.model_sampling.sigma(timesteps)
+        model.unpatch_model()
+        sigmas = torch.cat([sigmas, sigmas.new_zeros([1])])
         return (sigmas, )
 
 class VPScheduler:
@@ -257,6 +287,7 @@ NODE_CLASS_MAPPINGS = {
     "ExponentialScheduler": ExponentialScheduler,
     "PolyexponentialScheduler": PolyexponentialScheduler,
     "VPScheduler": VPScheduler,
+    "SDTurboScheduler": SDTurboScheduler,
     "KSamplerSelect": KSamplerSelect,
     "SamplerDPMPP_2M_SDE": SamplerDPMPP_2M_SDE,
     "SamplerDPMPP_SDE": SamplerDPMPP_SDE,
