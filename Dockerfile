@@ -36,7 +36,7 @@ ENV PORT 9090
 EXPOSE $PORT
 
 # Setup invokeai
-RUN cd /comfyui-container && /bin/bash install_webui.sh
+RUN cd /comfyui-container && /bin/bash install_webui.sh && /bin/bash install_plugins.sh
 
 # Command for starting webui
 CMD ["/bin/bash", "run_webui.sh"]
