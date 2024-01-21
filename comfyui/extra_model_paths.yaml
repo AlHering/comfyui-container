@@ -1,0 +1,90 @@
+#config for mounted model folders
+sd_v1:
+    base_path: /comfyui-container/machine_learning_models/stable_diffusion
+    checkpoints: |
+        STABLE_DIFFUSION
+        CHECKPOINTS
+    configs:  |
+        STABLE_DIFFUSION
+        CHECKPOINTS
+    vae: VAE
+    loras: |
+         LORA
+         LYCORIS
+    upscale_models: |
+         ESRGAN
+         REAL_ESRGAN
+         SWINIR
+    embeddings: |
+        EMBEDDINGS
+        TEXTUAL_INVERSION
+    hypernetworks: HYPERNETWORKS
+    controlnet: CONTROL_NET
+sd_v2:
+    base_path: /comfyui-container/machine_learning_models/stable_diffusion_v2
+    checkpoints: |
+        STABLE_DIFFUSION
+        CHECKPOINTS
+    configs:  |
+        STABLE_DIFFUSION
+        CHECKPOINTS
+    vae: VAE
+    loras: |
+         LORA
+         LYCORIS
+    upscale_models: |
+         ESRGAN
+         REAL_ESRGAN
+         SWINIR
+    embeddings: |
+        EMBEDDINGS
+        TEXTUAL_INVERSION
+    hypernetworks: HYPERNETWORKS
+    controlnet: CONTROL_NET
+sd_xl:
+    base_path: /comfyui-container/machine_learning_models/stable_diffusion_xl
+    checkpoints: |
+        STABLE_DIFFUSION
+        CHECKPOINTS
+    configs:  |
+        STABLE_DIFFUSION
+        CHECKPOINTS
+    vae: VAE
+    loras: |
+         LORA
+         LYCORIS
+    upscale_models: |
+         ESRGAN
+         REAL_ESRGAN
+         SWINIR
+    embeddings: |
+        EMBEDDINGS
+        TEXTUAL_INVERSION
+    hypernetworks: HYPERNETWORKS
+    controlnet: CONTROL_NET
+sd_xl_turbo:
+    base_path: /comfyui-container/machine_learning_models/stable_diffusion_xl_turbo
+    checkpoints: |
+        STABLE_DIFFUSION
+        CHECKPOINTS
+    configs:  |
+        STABLE_DIFFUSION
+        CHECKPOINTS
+    vae: VAE
+    loras: |
+         LORA
+         LYCORIS
+    upscale_models: |
+         ESRGAN
+         REAL_ESRGAN
+         SWINIR
+    embeddings: |
+        EMBEDDINGS
+        TEXTUAL_INVERSION
+    hypernetworks: HYPERNETWORKS
+    controlnet: CONTROL_NET
+#other_ui:
+#    base_path: path/to/ui
+#    checkpoints: models/checkpoints
+#    gligen: models/gligen
+#    custom_nodes: path/custom_nodes
