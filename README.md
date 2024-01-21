@@ -31,7 +31,7 @@ sudo systemctl restart docker
 
 ### 3. Clone or download and unpack this repository
 
-After cloning or downloading and unpacking, you might want to add to or adjust the code. Examples might be `comfyui/extra_model_paths.yaml`, `comfyui/folder_paths.py` or `install_webui.sh`.
+After cloning or downloading and unpacking, you might want to add to or adjust the code. Examples might be `comfyui/extra_model_paths.yaml`, `comfyui/folder_paths.py`, `install_plugins.sh` or `install_webui.sh`.
 The first file is used for importing the models from `/comfyui-container/machine_learning_models`. You can, however, delete this file and later mount your local model folders and configs directly to the appropriate folder under `comfyui/models`. Be aware that - depending on the model folder structure - the webui might prompt you to download default models, if they are not already available under their intended path.
 
 ### 4. Build a Docker image from the repository
