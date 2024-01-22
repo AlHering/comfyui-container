@@ -8,4 +8,4 @@ do
     git clone $plugin --recursive
 done
 
-pip install insightface==0.7.3
+pip install insightface==0.7.3 simpleeval==0.9.13
