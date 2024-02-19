@@ -16,4 +16,4 @@ pip install -r was-node-suite-comfyui/requirements.txt
 # Manage prompt folder linking
 ln -s /comfyui-container/stable_diffusion_prompts/* /comfyui-container/comfyui/custom_nodes/ComfyUI-Inspire-Pack/prompts/
 rm "/comfyui-container/comfyui/custom_nodes/ComfyUI-Inspire-Pack/prompts/mount stable diffusion prompt folders here.txt"
-find /text-generation-webui-container/text-generation-webui -xtype l -print -delete
+find /comfyui-container/comfyui/custom_nodes/ComfyUI-Inspire-Pack/prompts -xtype l -print -delete
