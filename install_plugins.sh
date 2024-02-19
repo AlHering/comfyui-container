@@ -14,6 +14,6 @@ pip install insightface==0.7.3 simpleeval==0.9.13
 pip install -r was-node-suite-comfyui/requirements.txt
 
 # Manage prompt folder linking
-ln -s /comfyui-container/stable_diffusion_prompts/* /comfyui-container/comfyui/custom_nodes/ComfyUI-Inspire-Pack/prompts/
+ln -s /comfyui-container/stable_diffusion_prompts /comfyui-container/comfyui/custom_nodes/ComfyUI-Inspire-Pack/prompts
 rm "/comfyui-container/comfyui/custom_nodes/ComfyUI-Inspire-Pack/prompts/mount stable diffusion prompt folders here.txt"
 find /comfyui-container/comfyui/custom_nodes/ComfyUI-Inspire-Pack/prompts -xtype l -print -delete
