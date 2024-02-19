@@ -42,11 +42,13 @@ nvidia-docker build -t comfyui-container:v1.2 <path to repo folder>
 ```sh
 nvidia-docker run  \
     -it --net=host -p 8188:8188 --gpus all \
-    --mount type=bind,source=<my local model folder>,target=/stable-diffusion-webui-container/machine_learning_models \
-    --mount type=bind,source=<my local output folder>,target=/stable-diffusion-webui-container/stable_diffusion_output \
+    --mount type=bind,source=/mnt/Workspaces/Resources/machine_learning/image_generation/models,target=/comfyui-container/machine_learning_models \
+    --mount type=bind,source=/mnt/Data/stable-diffusion-output,target=/comfyui-container/stable_diffusion_output \
+    --mount type=bind,source=/mnt/Data/stable-diffusion-prompts,target=/comfyui-container/stable_diffusion_prompts \
     "comfyui-container:v1.2"
 ```
 
+Note, that mounting the folders is optional but strongly advised for sharing important and potentially large files between multiple projects and docker containers.
 Note, that you can also open a terminal by appending `/bin/bash` to the command above. You will get to a terminal inside the running container and execute the bash script for linking the machine learning model folders. Afterwards you can start the webui manually with `bash run_webui.sh`.
 
 Note, that you can also directly mount your model or output folders to the appropriate folder under `comfyui/models` or `comfyui/output`.
