@@ -9,3 +9,4 @@ do
 done
 
 pip install insightface==0.7.3 simpleeval==0.9.13
+pip install -r was-node-suite-comfyui/requirements.txt
