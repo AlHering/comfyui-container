@@ -14,3 +14,8 @@ pip install insightface==0.7.3 simpleeval==0.9.13
 pip install segment-anything==1.0 omegaconf==2.3.0 
 pip install -r comfyui_controlnet_aux/requirements.txt
 pip install -r was-node-suite-comfyui/requirements.txt
+
+# Handle models
+mkdir /comfyui-container/comfyui/models/clip_vision
+ln -sf /comfyui-container/machine_learning_models/stable_diffusion/IPADAPTER /comfyui-container/comfyui/models/ipadapter
+ln -sf /comfyui-container/machine_learning_models/stable_diffusion/CLIP /comfyui-container/comfyui/models/clip_vision
