@@ -17,9 +17,8 @@ pip install -r was-node-suite-comfyui/requirements.txt
 pip install -r ComfyUI_essentials/requirements.txt
 
 # Handle models
-mkdir /comfyui-container/comfyui/models/clip_vision
 ln -sf /comfyui-container/machine_learning_models/stable_diffusion/IPADAPTER /comfyui-container/comfyui/models/ipadapter
 ln -sf /comfyui-container/machine_learning_models/stable_diffusion/CLIP /comfyui-container/comfyui/models/clip_vision
 
-mkdir /comfyui-container/comfyui/custom_nodes/comfyui_controlnet_aux/ckpts/LiheYoung/
+mkdir -p /comfyui-container/comfyui/custom_nodes/comfyui_controlnet_aux/ckpts/LiheYoung/
 ln -sf /comfyui-container/machine_learning_models/misc/LiheYoung_Depth-Anything /comfyui-container/comfyui/custom_nodes/comfyui_controlnet_aux/ckpts/LiheYoung/Depth-Anything
