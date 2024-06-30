@@ -11,6 +11,7 @@ import urllib
 import json
 import glob
 import struct
+import ssl
 from PIL import Image, ImageOps
 from PIL.PngImagePlugin import PngInfo
 from io import BytesIO
@@ -526,9 +527,22 @@ class PromptServer():
                     self.prompt_queue.delete_history_item(id_to_delete)
 
             return web.Response(status=200)
-        
+
     def add_routes(self):
         self.user_manager.add_routes(self.routes)
+
+        # Prefix every route with /api for easier matching for delegation.
+        # This is very useful for frontend dev server, which need to forward
+        # everything except serving of static files.
+        # Currently both the old endpoints without prefix and new endpoints with
+        # prefix are supported.
+        api_routes = web.RouteTableDef()
+        for route in self.routes:
+            # Custom nodes might add extra static routes. Only process non-static
+            # routes to add /api prefix.
+            if isinstance(route, web.RouteDef):
+                api_routes.route(route.method, "/api" + route.path)(route.handler, **route.kwargs)
+        self.app.add_routes(api_routes)
         self.app.add_routes(self.routes)
 
         for name, dir in nodes.EXTENSION_WEB_DIRS.items():
@@ -623,14 +637,22 @@ class PromptServer():
     async def start(self, address, port, verbose=True, call_on_start=None):
         runner = web.AppRunner(self.app, access_log=None)
         await runner.setup()
-        site = web.TCPSite(runner, address, port)
+        ssl_ctx = None
+        scheme = "http"
+        if args.tls_keyfile and args.tls_certfile:
+                ssl_ctx = ssl.SSLContext(protocol=ssl.PROTOCOL_TLS_SERVER, verify_mode=ssl.CERT_NONE)
+                ssl_ctx.load_cert_chain(certfile=args.tls_certfile,
+                                keyfile=args.tls_keyfile)
+                scheme = "https"
+
+        site = web.TCPSite(runner, address, port, ssl_context=ssl_ctx)
         await site.start()
 
         if verbose:
             logging.info("Starting server\n")
-            logging.info("To see the GUI go to: http://{}:{}".format(address, port))
+            logging.info("To see the GUI go to: {}://{}:{}".format(scheme, address, port))
         if call_on_start is not None:
-            call_on_start(address, port)
+            call_on_start(scheme, address, port)
 
     def add_on_prompt_handler(self, handler):
         self.on_prompt_handlers.append(handler)
