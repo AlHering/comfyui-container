@@ -13,12 +13,12 @@ do
 done
 
 # Handle requirements
-pip install insightface==0.7.3 simpleeval==0.9.13
-pip install segment-anything==1.0 omegaconf==2.3.0 
-pip install -r comfyui_controlnet_aux/requirements.txt
-pip install -r was-node-suite-comfyui/requirements.txt
-pip install -r ComfyUI_essentials/requirements.txt
-pip install -r ComfyUI_InstantID/requirements.txt
+source $VENV_DIR && pip install --no-cache-dir insightface==0.7.3 simpleeval==0.9.13
+source $VENV_DIR && pip install --no-cache-dir segment-anything==1.0 omegaconf==2.3.0 
+source $VENV_DIR && pip install --no-cache-dir -r comfyui_controlnet_aux/requirements.txt
+source $VENV_DIR && pip install --no-cache-dir -r was-node-suite-comfyui/requirements.txt
+source $VENV_DIR && pip install --no-cache-dir -r ComfyUI_essentials/requirements.txt
+source $VENV_DIR && pip install --no-cache-dir -r ComfyUI_InstantID/requirements.txt
 
 # Handle models
 ln -sf "${IMAGE_MODEL_DIR}/stable_diffusion/IPADAPTER" "${COMFY_DIR}/models/ipadapter"
