@@ -41,7 +41,7 @@ nvidia-docker build -t comfyui-container:v1.3.1 <path to repo folder>
 ### 5. Start a container based off of the image
 ```sh
 nvidia-docker run  \
-    -it --net=host -p 8188:8188 --gpus all \
+    -it <--net=host or -p 8188:8188> --gpus all \
     --mount type=bind,source=/mnt/Workspaces/Resources/machine_learning/image_generation/models,target=/comfyui-container/machine_learning_models \
     --mount type=bind,source=/mnt/Data/stable-diffusion-output,target=/comfyui-container/stable_diffusion_output \
     --mount type=bind,source=/mnt/Data/stable-diffusion-prompts,target=/comfyui-container/stable_diffusion_prompts \
