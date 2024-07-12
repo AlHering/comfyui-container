@@ -42,9 +42,9 @@ nvidia-docker build -t comfyui-container:v1.3.1 <path to repo folder>
 ```sh
 nvidia-docker run  \
     -it <--net=host or -p 8188:8188> --gpus all \
-    --mount type=bind,source=/mnt/Workspaces/Resources/machine_learning/image_generation/models,target=/comfyui-container/machine_learning_models \
-    --mount type=bind,source=/mnt/Data/stable-diffusion-output,target=/comfyui-container/stable_diffusion_output \
-    --mount type=bind,source=/mnt/Data/stable-diffusion-prompts,target=/comfyui-container/stable_diffusion_prompts \
+    --mount type=bind,source=<my model folder>,target=/comfyui-container/machine_learning_models \
+    --mount type=bind,source=<my output folder>,target=/comfyui-container/stable_diffusion_output \
+    --mount type=bind,source=<my prompt template folder>,target=/comfyui-container/stable_diffusion_prompts \
     "comfyui-container:v1.3"
 ```
 
