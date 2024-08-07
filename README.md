@@ -50,7 +50,7 @@ The first file is used for importing the models from `/comfyui-container/machine
 
 ### 4. Build a Docker image from the repository
 ```sh
-docker build -t comfyui-container:v1.4.1 <path to repo folder>
+docker build -t comfyui-container:v1.4 <path to repo folder>
 ```
 ### 5. Start a container based off of the image
 ```sh
