@@ -1,6 +1,6 @@
 #config for mounted model folders
-sd:
-    base_path: /comfyui-container/machine_learning_models/stable_diffusion
+sd_1_5:
+    base_path: /comfyui-container/machine_learning_models/stable_diffusion/SD_1_5
     checkpoints: |
         STABLE_DIFFUSION
         CHECKPOINTS
@@ -20,8 +20,45 @@ sd:
         TEXTUAL_INVERSION
     hypernetworks: HYPERNETWORKS
     controlnet: CONTROL_NET
-#other_ui:
-#    base_path: path/to/ui
-#    checkpoints: models/checkpoints
-#    gligen: models/gligen
-#    custom_nodes: path/custom_nodes
+sdxl_1_0:
+    base_path: /comfyui-container/machine_learning_models/stable_diffusion/SDXL_1_0
+    checkpoints: |
+        STABLE_DIFFUSION
+        CHECKPOINTS
+    configs:  |
+        STABLE_DIFFUSION
+        CHECKPOINTS
+    vae: VAE
+    loras: |
+         LORA
+         LYCORIS
+    upscale_models: |
+         ESRGAN
+         REAL_ESRGAN
+         SWINIR
+    embeddings: |
+        EMBEDDINGS
+        TEXTUAL_INVERSION
+    hypernetworks: HYPERNETWORKS
+    controlnet: CONTROL_NET
+sdxl_pony:
+    base_path: /comfyui-container/machine_learning_models/stable_diffusion/SDXL_PONY
+    checkpoints: |
+        STABLE_DIFFUSION
+        CHECKPOINTS
+    configs:  |
+        STABLE_DIFFUSION
+        CHECKPOINTS
+    vae: VAE
+    loras: |
+         LORA
+         LYCORIS
+    upscale_models: |
+         ESRGAN
+         REAL_ESRGAN
+         SWINIR
+    embeddings: |
+        EMBEDDINGS
+        TEXTUAL_INVERSION
+    hypernetworks: HYPERNETWORKS
+    controlnet: CONTROL_NET
