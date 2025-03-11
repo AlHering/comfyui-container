@@ -3,16 +3,50 @@ import argparse
 import logging
 import os
 import re
+import sys
 import tempfile
 import zipfile
+import importlib
 from dataclasses import dataclass
 from functools import cached_property
 from pathlib import Path
 from typing import TypedDict, Optional
+from importlib.metadata import version
 
 import requests
 from typing_extensions import NotRequired
+
 from comfy.cli_args import DEFAULT_VERSION_STRING
+
+# The path to the requirements.txt file
+req_path = Path(__file__).parents[1] / "requirements.txt"
+
+def frontend_install_warning_message():
+    """The warning message to display when the frontend version is not up to date."""
+
+    extra = ""
+    if sys.flags.no_user_site:
+        extra = "-s "
+    return f"Please install the updated requirements.txt file by running:\n{sys.executable} {extra}-m pip install -r {req_path}\n\nThis error is happening because the ComfyUI frontend is no longer shipped as part of the main repo but as a pip package instead.\n\nIf you are on the portable package you can run: update\\update_comfyui.bat to solve this problem"
+
+
+def check_frontend_version():
+    """Check if the frontend version is up to date."""
+
+    def parse_version(version: str) -> tuple[int, int, int]:
+        return tuple(map(int, version.split(".")))
+
+    try:
+        frontend_version_str = version("comfyui-frontend-package")
+        frontend_version = parse_version(frontend_version_str)
+        with open(req_path, "r", encoding="utf-8") as f:
+            required_frontend = parse_version(f.readline().split("=")[-1])
+        if frontend_version < required_frontend:
+            logging.warning("________________________________________________________________________\nWARNING WARNING WARNING WARNING WARNING\n\nInstalled frontend version {} is lower than the recommended version {}.\n\n{}\n________________________________________________________________________".format('.'.join(map(str, frontend_version)), '.'.join(map(str, required_frontend)), frontend_install_warning_message()))
+        else:
+            logging.info("ComfyUI frontend version: {}".format(frontend_version_str))
+    except Exception as e:
+        logging.error(f"Failed to check frontend version: {e}")
 
 
 REQUEST_TIMEOUT = 10  # seconds
@@ -109,8 +143,16 @@ def download_release_asset_zip(release: Release, destination_path: str) -> None:
 
 
 class FrontendManager:
-    DEFAULT_FRONTEND_PATH = str(Path(__file__).parents[1] / "web")
     CUSTOM_FRONTENDS_ROOT = str(Path(__file__).parents[1] / "web_custom_versions")
+
+    @classmethod
+    def default_frontend_path(cls) -> str:
+        try:
+            import comfyui_frontend_package
+            return str(importlib.resources.files(comfyui_frontend_package) / "static")
+        except ImportError:
+            logging.error(f"\n\n********** ERROR ***********\n\ncomfyui-frontend-package is not installed. {frontend_install_warning_message()}\n********** ERROR **********\n")
+            sys.exit(-1)
 
     @classmethod
     def parse_version_string(cls, value: str) -> tuple[str, str, str]:
@@ -148,7 +190,8 @@ class FrontendManager:
             main error source might be request timeout or invalid URL.
         """
         if version_string == DEFAULT_VERSION_STRING:
-            return cls.DEFAULT_FRONTEND_PATH
+            check_frontend_version()
+            return cls.default_frontend_path()
 
         repo_owner, repo_name, version = cls.parse_version_string(version_string)
 
@@ -168,20 +211,16 @@ class FrontendManager:
             Path(cls.CUSTOM_FRONTENDS_ROOT) / provider.folder_name / semantic_version
         )
         if not os.path.exists(web_root):
-            # Use tmp path until complete to avoid path exists check passing from interrupted downloads
-            tmp_path = web_root + ".tmp"
             try:
-                os.makedirs(tmp_path, exist_ok=True)
+                os.makedirs(web_root, exist_ok=True)
                 logging.info(
                     "Downloading frontend(%s) version(%s) to (%s)",
                     provider.folder_name,
                     semantic_version,
-                    tmp_path,
+                    web_root,
                 )
                 logging.debug(release)
-                download_release_asset_zip(release, destination_path=tmp_path)
-                if os.listdir(tmp_path):
-                    os.rename(tmp_path, web_root)
+                download_release_asset_zip(release, destination_path=web_root)
             finally:
                 # Clean up the directory if it is empty, i.e. the download failed
                 if not os.listdir(web_root):
@@ -205,4 +244,5 @@ class FrontendManager:
         except Exception as e:
             logging.error("Failed to initialize frontend: %s", e)
             logging.info("Falling back to the default frontend.")
-            return cls.DEFAULT_FRONTEND_PATH
+            check_frontend_version()
+            return cls.default_frontend_path()

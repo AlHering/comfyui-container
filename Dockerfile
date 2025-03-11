@@ -21,14 +21,14 @@ RUN apt-get update && apt-get install -y apt-utils \
 RUN apt-get update && apt-get install -y \
     make build-essential wget curl git nano ffmpeg libsm6 libxext6 \
     p7zip-full p7zip-rar \
-    python3.10 python3.10-distutils python3.10-dev python3.10-venv \
+    python3.12 python3.12-full python3.12-dev python3.12-venv \
     libgoogle-perftools4 libtcmalloc-minimal4 libgoogle-perftools-dev \
     pkg-config libcairo2-dev libjpeg-dev libgif-dev && apt-get clean -y
 
 # Create venv
 RUN if [ ! -d "venv" ]; \
     then \
-    python3.10 -m venv venv; \
+    python3.12 -m venv venv; \
     fi
 
 # Access port

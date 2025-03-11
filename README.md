@@ -6,7 +6,7 @@
 ## Used Repositories/Code
 | Name         | Link     | commit |
 |--------------|-----------|------------|
-| comfyanonymous' ComfyUI WebUI |  https://github.com/comfyanonymous/ComfyUI    |   8ce2a10    |
+| comfyanonymous' ComfyUI WebUI |  https://github.com/comfyanonymous/ComfyUI    |   e83063b    |
 
 ## Installation
 ### 1. Install Docker
@@ -50,7 +50,7 @@ The first file is used for importing the models from `/comfyui-container/machine
 
 ### 4. Build a Docker image from the repository
 ```sh
-docker build -t comfyui-container:v1.5.0 <path to repo folder>
+docker build -t comfyui-container:v1.6.0 <path to repo folder>
 ```
 ### 5. Start a container based off of the image
 ```sh
@@ -72,7 +72,7 @@ If you exit the container and it is stopped, you can use
 ```sh
 docker ps --all
 ```
-to retrieve the name of the `comfyui-container:v1.5.0` container and rerun and interactively enter it with
+to retrieve the name of the `comfyui-container:v1.6.0` container and rerun and interactively enter it with
 ```sh
 docker restart <container name> &&  nvidia-docker exec -it <container name> /bin/bash
 ```

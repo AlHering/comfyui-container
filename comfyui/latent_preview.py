@@ -1,7 +1,5 @@
 import torch
 from PIL import Image
-import struct
-import numpy as np
 from comfy.cli_args import args, LatentPreviewMethod
 from comfy.taesd.taesd import TAESD
 import comfy.model_management
@@ -14,7 +12,10 @@ MAX_PREVIEW_RESOLUTION = args.preview_size
 def preview_to_image(latent_image):
         latents_ubyte = (((latent_image + 1.0) / 2.0).clamp(0, 1)  # change scale from -1..1 to 0..1
                             .mul(0xFF)  # to 0..255
-                            ).to(device="cpu", dtype=torch.uint8, non_blocking=comfy.model_management.device_supports_non_blocking(latent_image.device))
+                            )
+        if comfy.model_management.directml_enabled:
+                latents_ubyte = latents_ubyte.to(dtype=torch.uint8)
+        latents_ubyte = latents_ubyte.to(device="cpu", dtype=torch.uint8, non_blocking=comfy.model_management.device_supports_non_blocking(latent_image.device))
 
         return Image.fromarray(latents_ubyte.numpy())
 
@@ -47,7 +48,12 @@ class Latent2RGBPreviewer(LatentPreviewer):
         if self.latent_rgb_factors_bias is not None:
             self.latent_rgb_factors_bias = self.latent_rgb_factors_bias.to(dtype=x0.dtype, device=x0.device)
 
-        latent_image = torch.nn.functional.linear(x0[0].permute(1, 2, 0), self.latent_rgb_factors, bias=self.latent_rgb_factors_bias)
+        if x0.ndim == 5:
+            x0 = x0[0, :, 0]
+        else:
+            x0 = x0[0]
+
+        latent_image = torch.nn.functional.linear(x0.movedim(0, -1), self.latent_rgb_factors, bias=self.latent_rgb_factors_bias)
         # latent_image = x0[0].permute(1, 2, 0) @ self.latent_rgb_factors
 
         return preview_to_image(latent_image)

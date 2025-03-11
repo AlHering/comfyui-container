@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import torchaudio
 import torch
 import comfy.model_management
@@ -8,7 +10,9 @@ import json
 import struct
 import random
 import hashlib
+import node_helpers
 from comfy.cli_args import args
+from comfy.comfy_types import FileLocator
 
 class EmptyLatentAudio:
     def __init__(self):
@@ -28,6 +32,27 @@ class EmptyLatentAudio:
         length = round((seconds * 44100 / 2048) / 2) * 2
         latent = torch.zeros([batch_size, 64, length], device=self.device)
         return ({"samples":latent, "type": "audio"}, )
+
+class ConditioningStableAudio:
+    @classmethod
+    def INPUT_TYPES(s):
+        return {"required": {"positive": ("CONDITIONING", ),
+                             "negative": ("CONDITIONING", ),
+                             "seconds_start": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 1000.0, "step": 0.1}),
+                             "seconds_total": ("FLOAT", {"default": 47.0, "min": 0.0, "max": 1000.0, "step": 0.1}),
+                             }}
+
+    RETURN_TYPES = ("CONDITIONING","CONDITIONING")
+    RETURN_NAMES = ("positive", "negative")
+
+    FUNCTION = "append"
+
+    CATEGORY = "conditioning"
+
+    def append(self, positive, negative, seconds_start, seconds_total):
+        positive = node_helpers.conditioning_set_values(positive, {"seconds_start": seconds_start, "seconds_total": seconds_total})
+        negative = node_helpers.conditioning_set_values(negative, {"seconds_start": seconds_start, "seconds_total": seconds_total})
+        return (positive, negative)
 
 class VAEEncodeAudio:
     @classmethod
@@ -142,7 +167,7 @@ class SaveAudio:
     def save_audio(self, audio, filename_prefix="ComfyUI", prompt=None, extra_pnginfo=None):
         filename_prefix += self.prefix_append
         full_output_folder, filename, counter, subfolder, filename_prefix = folder_paths.get_save_image_path(filename_prefix, self.output_dir)
-        results = list()
+        results: list[FileLocator] = []
 
         metadata = {}
         if not args.disable_metadata:
@@ -225,4 +250,5 @@ NODE_CLASS_MAPPINGS = {
     "SaveAudio": SaveAudio,
     "LoadAudio": LoadAudio,
     "PreviewAudio": PreviewAudio,
+    "ConditioningStableAudio": ConditioningStableAudio,
 }
