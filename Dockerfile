@@ -1,5 +1,5 @@
 FROM ubuntu:22.04
-ENV PYTHONUNBUFFERED 1
+ENV PYTHONUNBUFFERED=1
 
 # Setting up basic repo 
 ARG DEBIAN_FRONTEND=noninteractive
@@ -32,7 +32,7 @@ RUN if [ ! -d "venv" ]; \
     fi
 
 # Access port
-ENV PORT 9090
+ENV PORT=9090
 EXPOSE $PORT
 
 # Setup invokeai
